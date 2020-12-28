@@ -57,6 +57,26 @@ public class MteSense {
     }
 
 
+    public WebDriver getGeckoDriver(){
+        System.setProperty("webdriver.gecko.driver", props.get("mte.geckodriver.path"));
+
+        return getFirefoxDriver();
+    }
+
+    public WebDriver getGeckoDriver(String geckoDriverPath){
+        System.setProperty("webdriver.gecko.driver", geckoDriverPath);
+
+        return getFirefoxDriver();
+    }
+
+    public WebDriver getGeckoDriver(DesiredCapabilities capabilities){
+        System.setProperty("webdriver.gecko.driver", props.get("mte.geckodriver.path"));
+
+        return getFirefoxDriver(capabilities);
+    }
+
+
+
     public WebDriver getFirefoxDriver() {
         System.setProperty("webdriver.firefox.bin", props.get("mte.firefoxdriver.path"));
         try {
@@ -74,7 +94,7 @@ public class MteSense {
                     .setScriptTimeout(scriptTimeout, TimeUnit.SECONDS);
             logger.debug("set scriptTimeout : " + scriptTimeout);
             driver.manage().window().maximize();
-            MteSenseAssistant.setMteSenseDriverMap(MteSenseAssistant.firefox,driver);
+            MteSenseAssistant.setMteSenseDriverMap(MteSenseAssistant.firefox, driver);
         } catch (Exception e) {
             logger.error("Loading Firefox Driver Error : " + e);
         }
@@ -97,7 +117,7 @@ public class MteSense {
                     .setScriptTimeout(scriptTimeout, TimeUnit.SECONDS);
             logger.debug("set scriptTimeout : " + scriptTimeout);
             driver.manage().window().maximize();
-            MteSenseAssistant.setMteSenseDriverMap(MteSenseAssistant.firefox,driver);
+            MteSenseAssistant.setMteSenseDriverMap(MteSenseAssistant.firefox, driver);
         } catch (Exception e) {
             logger.error("Loading Firefox Driver Error : " + e);
         }
@@ -123,7 +143,7 @@ public class MteSense {
                     .setScriptTimeout(scriptTimeout, TimeUnit.SECONDS);
             logger.debug("set scriptTimeout : " + scriptTimeout);
             driver.manage().window().maximize();
-            MteSenseAssistant.setMteSenseDriverMap(MteSenseAssistant.chrome,driver);
+            MteSenseAssistant.setMteSenseDriverMap(MteSenseAssistant.chrome, driver);
         } catch (Exception e) {
             logger.error("Loading Chrome Driver Error : " + e);
         }
@@ -147,7 +167,7 @@ public class MteSense {
                     .setScriptTimeout(scriptTimeout, TimeUnit.SECONDS);
             logger.debug("set scriptTimeout : " + scriptTimeout);
             driver.manage().window().maximize();
-            MteSenseAssistant.setMteSenseDriverMap(MteSenseAssistant.chrome,driver);
+            MteSenseAssistant.setMteSenseDriverMap(MteSenseAssistant.chrome, driver);
         } catch (Exception e) {
             logger.error("Loading Chrome Driver Error : " + e);
         }
@@ -179,7 +199,7 @@ public class MteSense {
                     .setScriptTimeout(scriptTimeout, TimeUnit.SECONDS);
             logger.debug("set scriptTimeout : " + scriptTimeout);
             driver.manage().window().maximize();
-            MteSenseAssistant.setMteSenseDriverMap(MteSenseAssistant.ie,driver);
+            MteSenseAssistant.setMteSenseDriverMap(MteSenseAssistant.ie, driver);
         } catch (Exception e) {
             logger.error("Loading IE Driver Error : " + e);
         }
@@ -203,7 +223,7 @@ public class MteSense {
                     .setScriptTimeout(scriptTimeout, TimeUnit.SECONDS);
             logger.debug("set scriptTimeout : " + scriptTimeout);
             driver.manage().window().maximize();
-            MteSenseAssistant.setMteSenseDriverMap(MteSenseAssistant.ie,driver);
+            MteSenseAssistant.setMteSenseDriverMap(MteSenseAssistant.ie, driver);
         } catch (Exception e) {
             logger.error("Loading IE Driver Error : " + e);
         }
@@ -252,7 +272,7 @@ public class MteSense {
             if (capabilities != null) {
                 ios = new IOSDriver(new URL(url), capabilities);
                 sessionId = ios.getSessionId().toString();
-                MteSenseAssistant.setMteSenseDriverMap(MteSenseAssistant.ios,driver);
+                MteSenseAssistant.setMteSenseDriverMap(MteSenseAssistant.ios, driver);
             } else {
                 logger.error("DesiredCapabilities is null, please check with your setting");
                 return null;
@@ -268,7 +288,7 @@ public class MteSense {
             if (capabilities != null) {
                 android = new AndroidDriver(new URL(url), capabilities);
                 sessionId = android.getSessionId().toString();
-                MteSenseAssistant.setMteSenseDriverMap(MteSenseAssistant.android,driver);
+                MteSenseAssistant.setMteSenseDriverMap(MteSenseAssistant.android, driver);
             } else {
                 logger.error("DesiredCapabilities is null, please check with your setting");
                 return null;
@@ -278,5 +298,16 @@ public class MteSense {
         }
         return android;
     }
+
+    public static void pause(int seconds) {
+
+        try {
+
+            Thread.sleep(seconds*1000);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
 }

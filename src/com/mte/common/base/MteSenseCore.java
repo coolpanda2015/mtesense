@@ -5,6 +5,7 @@ import com.mte.util.DateTimeUtil;
 import com.mte.util.FileUtil;
 import com.mte.util.PropUtil;
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.MobileBy;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.ios.IOSDriver;
 import org.apache.log4j.Logger;
@@ -22,7 +23,7 @@ import java.util.Set;
 /**
  * Project :  mtesense
  * Created :  java
- * Date    :  3/26/15
+ * Date    :  3/26/15f
  * Note : Some codes come from internet
  */
 public class MteSenseCore {
@@ -64,6 +65,129 @@ public class MteSenseCore {
         return ((AppiumDriver) driver).getContextHandles();
     }
 
+
+    /**
+     * special slide up
+     *
+     * @param width (1-99)
+     */
+    public void slideUP(int width) {
+
+        if (width <= 0 || width > 100) {
+            logger.error("The slide width should be between 1 t0 99 .");
+        } else {
+            int x = ((AppiumDriver) driver).manage().window().getSize().width;
+            int y = ((AppiumDriver) driver).manage().window().getSize().height;
+            ((AppiumDriver) driver).swipe(x / 10 * width, y / 3 * 2, x / 10 * width, y / 3 * 1, 0);
+        }
+
+    }
+
+    /**
+     * special slide down
+     *
+     * @param width (1-99)
+     */
+    public void slideDown(int width) {
+        if (width <= 0 || width > 100) {
+            logger.error("The slide width should be between 1 t0 99 .");
+        } else {
+            int x = ((AppiumDriver) driver).manage().window().getSize().width;
+            int y = ((AppiumDriver) driver).manage().window().getSize().height;
+            ((AppiumDriver) driver).swipe(x / 10 * width, y / 3 * 1, x / 10 * width, y / 3 * 2, 0);
+        }
+
+    }
+
+    /**
+     * special slide left
+     *
+     * @param width (1-99)
+     */
+    public void slideLeft(int width) {
+        if (width <= 0 || width > 100) {
+            logger.error("The slide width should be between 1 t0 99 .");
+        } else {
+            int x = ((AppiumDriver) driver).manage().window().getSize().width;
+            int y = ((AppiumDriver) driver).manage().window().getSize().height;
+            ((AppiumDriver) driver).swipe(x / 4 * 3, y / 10 * width, x / 4 * 2, y / 10 * width, 0);
+        }
+
+    }
+
+    /**
+     * special slide right
+     *
+     * @param width (1-99)
+     */
+    public void slideRight(int width) {
+        if (width <= 0 || width > 100) {
+            logger.error("The slide width should be between 1 t0 99 .");
+        } else {
+            int x = ((AppiumDriver) driver).manage().window().getSize().width;
+            int y = ((AppiumDriver) driver).manage().window().getSize().height;
+            ((AppiumDriver) driver).swipe(x / 4 * 2, y / 10 * width, x / 4 * 3, y / 10 * width, 0);
+        }
+
+    }
+
+
+    /**
+     * up slide 1/4
+     */
+    public void slideUP() {
+        int x = ((AppiumDriver) driver).manage().window().getSize().width;
+        int y = ((AppiumDriver) driver).manage().window().getSize().height;
+        ((AppiumDriver) driver).swipe(x / 2, y / 3 * 2, x / 2, y / 3 * 1, 0);
+    }
+
+    /**
+     * down slide 1/4
+     */
+    public void slideDown() {
+        int x = ((AppiumDriver) driver).manage().window().getSize().width;
+        int y = ((AppiumDriver) driver).manage().window().getSize().height;
+        ((AppiumDriver) driver).swipe(x / 2, y / 3 * 1, x / 2, y / 3 * 2, 0);
+    }
+
+    /**
+     * left slide 1/2
+     */
+    public void slideLeft() {
+        int x = ((AppiumDriver) driver).manage().window().getSize().width;
+        int y = ((AppiumDriver) driver).manage().window().getSize().height;
+        ((AppiumDriver) driver).swipe(x / 4 * 3, y / 2, x / 4 * 1, y / 2, 0);
+    }
+
+    /**
+     * right slide 1/2
+     */
+    public void slideRight() {
+        int x = ((AppiumDriver) driver).manage().window().getSize().width;
+        int y = ((AppiumDriver) driver).manage().window().getSize().height;
+        ((AppiumDriver) driver).swipe(x / 4 * 1, y / 2, x / 4 * 3, y / 2, 0);
+    }
+
+
+    /**
+     * Switch to webview for elements
+     */
+    public void switchtoWebView() {
+        try {
+            Set<String> contextNames = ((AppiumDriver) driver).getContextHandles();
+            for (String contextName : contextNames) {
+                if (contextName.contains("WEBVIEW") || contextName.contains("webview")) {
+                    ((AppiumDriver) driver).context(contextName);
+                    System.out.println("Webdriver forward to webview");
+                }
+            }
+        } catch (Exception e) {
+            logger.error("Switch to webview error !");
+            e.printStackTrace();
+        }
+    }
+
+
     /**
      * @param name String context name
      */
@@ -73,12 +197,61 @@ public class MteSenseCore {
         return ((AppiumDriver) driver).context(name);
     }
 
+    /**
+     * Close app in mobile platform
+     */
+    public void closeApp() {
+        ((AppiumDriver) driver).closeApp();
+    }
+
+
+    /**
+     * Close app in mobile platform
+     */
+    public void closeIosApp() {
+        ((IOSDriver) driver).closeApp();
+    }
+
+
     public void hideKeyboard() {
         ((AppiumDriver) driver).hideKeyboard();
     }
 
     /**
+     * Get element for IOS 10+ version with Appium 1.6.3 +
+     *
+     * @param locatorType
+     * @param locatorValue
+     * @return
+     */
+
+
+    public WebElement findElementForIos10(String locatorType, String locatorValue) {
+
+        WebElement element = null;
+        switch (locatorType) {
+
+            case "iOSNsPredicateString":
+                element = ((IOSDriver) driver).findElement(MobileBy.iOSNsPredicateString(locatorValue));
+                break;
+            case "className":
+                element = ((IOSDriver) driver).findElement(MobileBy.className(locatorValue));
+                break;
+            case "iOSClassChain":
+                element = ((IOSDriver) driver).findElement(MobileBy.iOSClassChain(locatorValue));
+                break;
+            default:
+                element = null;
+                break;
+        }
+        return element;
+
+    }
+
+
+    /**
      * IOSDriver
+     *
      * @param using the element using
      */
 
@@ -91,6 +264,7 @@ public class MteSenseCore {
 
     /**
      * IOSDriver
+     *
      * @param using the element using
      */
 
@@ -103,6 +277,7 @@ public class MteSenseCore {
 
     /**
      * AndroidDriver
+     *
      * @param using the element using
      */
 
@@ -115,6 +290,7 @@ public class MteSenseCore {
 
     /**
      * AndroidDriver
+     *
      * @param using the element using
      */
 
@@ -425,7 +601,7 @@ public class MteSenseCore {
     }
 
     public WebElement findElement(By by) {
-        return findElement(by, 0);
+        return findElement(by, 3);
     }
 
 
@@ -1264,38 +1440,38 @@ public class MteSenseCore {
     }
 
 
-    /**
-     * select a frame by frame element locator: By
-     *
-     * @param by      the frame element locator
-     * @param timeout 超时时间，单位：秒
-     */
-    public void selectFrame(By by, long timeout) {
-        boolean isSucceed = false;
-        long timeBegins = System.currentTimeMillis();
-        do {
-            try {
-                selectDefaultFrame();
-                driver.switchTo().frame(driver.findElement(by));
-                logger.debug("select frame by frame locator [ " + by.toString()
-                        + " ]");
-                isSucceed = true;
-                break;
-            } catch (Exception e) {
-                logger.error(e);
-            }
-            pause(pauseTime);
-        } while (System.currentTimeMillis() - timeBegins <= timeout * 1000);
-    }
-
-    /**
-     * select a frame by frame element locator: By
-     *
-     * @param by the frame element locator
-     */
-    public void selectFrame(By by) {
-        selectFrame(by, 0);
-    }
+//    /**
+//     * select a frame by frame element locator: By
+//     *
+//     * @param by      the frame element locator
+//     * @param timeout 超时时间，单位：秒
+//     */
+//    public void selectFrame(By by, long timeout) {
+//        boolean isSucceed = false;
+//        long timeBegins = System.currentTimeMillis();
+//        do {
+//            try {
+//                selectDefaultFrame();
+//                driver.switchTo().frame(driver.findElement(by));
+//                logger.debug("select frame by frame locator [ " + by.toString()
+//                        + " ]");
+//                isSucceed = true;
+//                break;
+//            } catch (Exception e) {
+//                logger.error(e);
+//            }
+//            pause(pauseTime);
+//        } while (System.currentTimeMillis() - timeBegins <= timeout * 1000);
+//    }
+//
+//    /**
+//     * select a frame by frame element locator: By
+//     *
+//     * @param by the frame element locator
+//     */
+//    public void selectFrame(By by) {
+//        selectFrame(by, 0);
+//    }
 
     /**
      * select a frame by frame tagName: tagName
@@ -1398,37 +1574,37 @@ public class MteSenseCore {
     }
 
 
-    /**
-     * select a frame by frame element locator: By
-     *
-     * @param by      the frame element locator
-     * @param timeout 超时时间，单位：秒
-     */
-    public void selectFrameNoDefault(By by, long timeout) {
-        boolean isSucceed = false;
-        long timeBegins = System.currentTimeMillis();
-        do {
-            try {
-                driver.switchTo().frame(driver.findElement(by));
-                logger.debug("select frame by frame locator [ " + by.toString()
-                        + " ]");
-                isSucceed = true;
-                break;
-            } catch (Exception e) {
-                logger.error(e);
-            }
-            pause(pauseTime);
-        } while (System.currentTimeMillis() - timeBegins <= timeout * 1000);
-    }
-
-    /**
-     * select a frame by frame element locator: By
-     *
-     * @param by the frame element locator
-     */
-    public void selectFrameNoDefault(By by) {
-        selectFrameNoDefault(by, 0);
-    }
+//    /**
+//     * select a frame by frame element locator: By
+//     *
+//     * @param by      the frame element locator
+//     * @param timeout 超时时间，单位：秒
+//     */
+//    public void selectFrameNoDefault(By by, long timeout) {
+//        boolean isSucceed = false;
+//        long timeBegins = System.currentTimeMillis();
+//        do {
+//            try {
+//                driver.switchTo().frame(driver.findElement(by));
+//                logger.debug("select frame by frame locator [ " + by.toString()
+//                        + " ]");
+//                isSucceed = true;
+//                break;
+//            } catch (Exception e) {
+//                logger.error(e);
+//            }
+//            pause(pauseTime);
+//        } while (System.currentTimeMillis() - timeBegins <= timeout * 1000);
+//    }
+//
+//    /**
+//     * select a frame by frame element locator: By
+//     *
+//     * @param by the frame element locator
+//     */
+//    public void selectFrameNoDefault(By by) {
+//        selectFrameNoDefault(by, 0);
+//    }
 
 
     /**
@@ -1504,24 +1680,24 @@ public class MteSenseCore {
         }
     }
 
-    /**
-     * edit a content editable iframe
-     *
-     * @param by   the frame element locaotr
-     * @param text the text string to be input
-     */
-    protected void editFrameText(By by, String text) {
-        boolean isSucceed = false;
-        try {
-            driver.switchTo().frame(driver.findElement(by));
-            driver.switchTo().activeElement().sendKeys(text);
-            logger.debug("input text [ " + text + " ] to frame [ "
-                    + by.toString() + " ]");
-            isSucceed = true;
-        } catch (Exception e) {
-            logger.error(e);
-        }
-    }
+//    /**
+//     * edit a content editable iframe
+//     *
+//     * @param by   the frame element locaotr
+//     * @param text the text string to be input
+//     */
+//    protected void editFrameText(By by, String text) {
+//        boolean isSucceed = false;
+//        try {
+//            driver.switchTo().frame(driver.findElement(by));
+//            driver.switchTo().activeElement().sendKeys(text);
+//            logger.debug("input text [ " + text + " ] to frame [ "
+//                    + by.toString() + " ]");
+//            isSucceed = true;
+//        } catch (Exception e) {
+//            logger.error(e);
+//        }
+//    }
 
 
     /**
@@ -2036,11 +2212,12 @@ public class MteSenseCore {
 
     /**
      * scroll screen to the nominated element position
-     * @ Tony
+     *
      * @param table the nominated table
+     * @ Tony
      */
-    public void scrollScreenToElementPosition(WebElement table){
-        Coordinates coor = ((Locatable)table).getCoordinates();
+    public void scrollScreenToElementPosition(WebElement table) {
+        Coordinates coor = ((Locatable) table).getCoordinates();
         coor.inViewPort();
     }
 
